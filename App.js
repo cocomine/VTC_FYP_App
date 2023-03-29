@@ -15,8 +15,8 @@ import {
 } from '@react-navigation/native';
 import {
     Appbar,
-    MD2DarkTheme as PaperDarkTheme,
-    MD2LightTheme as PaperDefaultTheme,
+    MD3DarkTheme as PaperDarkTheme,
+    MD3LightTheme as PaperDefaultTheme,
     Provider as PaperProvider,
 } from 'react-native-paper';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';

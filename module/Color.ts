@@ -3,7 +3,7 @@
  * 顏色列表
  */
 export const Color = {
-    primaryColor: '#127dff',
+    primaryColor: '#12a0ff',
     darkColor: '#232323',
     darkBlock: '#2a2a2a',
     lightColorBG: '#efefef',

@@ -1,0 +1,17 @@
+Index: node_modules/react-native-bottom-drawer-view/src/Animator.js
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/node_modules/react-native-bottom-drawer-view/src/Animator.js b/node_modules/react-native-bottom-drawer-view/src/Animator.js
+--- a/node_modules/react-native-bottom-drawer-view/src/Animator.js	
++++ b/node_modules/react-native-bottom-drawer-view/src/Animator.js	(date 1680124044208)
+@@ -57,7 +57,7 @@
+       if(!this.props.downPosition){
+         return
+       }
+-      this._transitionTo(this.props.alldownPosition, this.props.onCollapsed);
++      this._transitionTo(this.props.downPosition, this.props.onCollapsed);
+     }else if(gesture.dy < -this.props.toggleThreshold && this.props.currentPosition === this.props.alldownPosition){
+       if(!this.props.downPosition){
+         return
