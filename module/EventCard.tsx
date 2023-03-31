@@ -5,6 +5,7 @@ import { Color } from './Color';
 import { ResultData } from './resultData';
 import React from 'react';
 import { InAppBrowser } from 'react-native-inappbrowser-reborn';
+// @ts-ignore
 import Icon from 'react-native-vector-icons/AntDesign';
 
 interface EventCardProps {
@@ -23,7 +24,7 @@ const EventCard: React.FC<EventCardProps> = ({ data, cardWidth }) => {
         try {
             const url = URL + '/details/' + data.ID;
             if (await InAppBrowser.isAvailable()) {
-                const result = await InAppBrowser.open(url, {
+                await InAppBrowser.open(url, {
                     // iOS Properties
                     dismissButtonStyle: 'cancel',
                     preferredBarTintColor: Color.primaryColor,
@@ -55,9 +56,6 @@ const EventCard: React.FC<EventCardProps> = ({ data, cardWidth }) => {
                         endExit: 'slide_out_right',
                     },
                 });
-                setTimeout(() => {
-                    console.log(JSON.stringify(result));
-                }, 800);
             } else {
                 await Linking.openURL(url);
             }
@@ -75,7 +73,7 @@ const EventCard: React.FC<EventCardProps> = ({ data, cardWidth }) => {
             <Image style={styles.thumbnail} source={{ uri: URL + '/panel/api/media/' + data.thumbnail }} />
             <View style={styles.text_title}>
                 <Text variant={'titleMedium'}>{data.name}</Text>
-                <Text variant={'bodySmall'}><Icon name={'star'} color={Color.warning}/>10</Text>
+                <Text variant={'labelSmall'} style={{color: theme.colors.secondary}}><Icon name={'star'} color={Color.warning}/>{data.rate}({data.total})</Text>
             </View>
             <Text style={[styles.text_summary, {color: theme.colors.secondary}]} variant={'bodyMedium'}>{data.summary}</Text>
             <View style={styles.moreBtn_container}>

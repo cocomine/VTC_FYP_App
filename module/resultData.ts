@@ -26,6 +26,14 @@ type ResultData = {
    * @description thumbnail is the thumbnail of the event
    */
   thumbnail: string;
+  /**
+   * @description rate is the rate of the event
+   */
+  rate: number;
+  /**
+   * @description total is the total review of the event
+   */
+  total:number;
 }
 
 /**
