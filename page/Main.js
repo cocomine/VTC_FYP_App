@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Dimensions, SafeAreaView, StatusBar, StyleSheet, View } from 'react-native';
+import { Dimensions, PixelRatio, SafeAreaView, StatusBar, StyleSheet, View } from 'react-native';
 import MapView, { UserLocationChangeEvent } from 'react-native-maps';
 import { Button, IconButton, useTheme } from 'react-native-paper';
 import { check, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
@@ -20,7 +20,6 @@ const Main = ({}) => {
     /** @type ResultData[] */
     const ResultDataType = [];
     const cardWidth = Dimensions.get('window').width * 0.8; //卡片寬度
-    const windowHeight = Dimensions.get('window').height; //螢幕高度
     const theme = useTheme(); //主題
 
     const ref = useRef(null); //MapView ref
@@ -35,13 +34,13 @@ const Main = ({}) => {
         top: 0,
         left: 0,
         right: 0,
-        bottom: windowHeight * 0.25,
+        bottom: PixelRatio.getFontScale() + 160,
     }); // 預設地圖Padding
     const [loading, setLoading] = useState(false); // 是否正在載入
     const [data, setData] = useState(ResultDataType); // 搜尋結果
     const [activatedMarker, setActivatedMarker] = useState(0); // 激活的標記
 
-    const snapPoints = useMemo(() => ['20%', '25%', '40%'], []); // bottomSheet 停止位置
+    const snapPoints = useMemo(() => [80, PixelRatio.getFontScale() + 160, 400], []); // bottomSheet 停止位置
 
     /**
      * gps更新
@@ -100,24 +99,24 @@ const Main = ({}) => {
                 top: 0,
                 left: 0,
                 right: 0,
-                bottom: windowHeight * 0.20,
+                bottom: 80,
             });
         } else if (index === 1) {
             setMapPadding({
                 top: 0,
                 left: 0,
                 right: 0,
-                bottom: windowHeight * 0.25,
+                bottom: PixelRatio.getFontScale() + 160,
             });
         } else {
             setMapPadding({
                 top: 0,
                 left: 0,
                 right: 0,
-                bottom: windowHeight * 0.40,
+                bottom: 400,
             });
         }
-    }, [windowHeight]);
+    }, []);
 
     /* 點擊標記 */
     const markerPass = useCallback((index) => {
