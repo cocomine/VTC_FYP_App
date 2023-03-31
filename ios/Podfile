@@ -22,7 +22,6 @@ if linkage != nil
 end
 
 target 'FYP' do
-  platform :ios, '13.0'
   config = use_native_modules!
 
   # Flags change depending on the env values.

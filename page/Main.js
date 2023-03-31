@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
     Dimensions,
     SafeAreaView,
@@ -6,33 +6,46 @@ import {
     StyleSheet,
     View,
 } from 'react-native';
-import MapView, {UserLocationChangeEvent} from 'react-native-maps';
-import {Button, IconButton, Text} from 'react-native-paper';
-import {check, PERMISSIONS, request, RESULTS} from 'react-native-permissions';
-import {Color} from '../module/Color';
-import BottomSheet, {BottomSheetFlatList} from '@gorhom/bottom-sheet';
+import MapView, { UserLocationChangeEvent } from 'react-native-maps';
+import { Button, IconButton, Text } from 'react-native-paper';
+import { check, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
+import { Color } from '../module/Color';
+import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 
-const Main = () => {
+const Main = (callback, deps) => {
+    const cardWidth = Dimensions.get('window').width * 0.8;
+    const windowHeight = Dimensions.get('window').height;
     const ref = useRef(null); //MapView ref
-    const [gps, setGps] = useState(false); //是否開啟地圖定位
+    const [gps, setGps] = useState(false); // 是否開啟地圖定位
     const userLocal = useRef({
         latitude: 22.3659544,
         longitude: 114.1213403,
-    }).current; //目前用戶位置
+    }).current; // 目前用戶位置
+    const [mapPadding, setMapPadding] = useState({
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: windowHeight * 0.25,
+    }); // 預設地圖Padding
+    const bottomSheetRef = useRef(null); //bottomSheet Ref
+    const snapPoints = useMemo(() => ['15%', '25%', '50%'], []); // bottomSheet 停止位置
+    const [loading, setLoading] = useState(false); // 是否正在載入
+
+    //debug
     const test = [
-        {id: 0},
-        {id: 1},
-        {id: 2},
-        {id: 3},
-        {id: 4},
-        {id: 5},
-        {id: 6},
-        {id: 7},
-        {id: 8},
-        {id: 9},
-        {id: 10},
-        {id: 11},
-        {id: 12},
+        { id: 0 },
+        { id: 1 },
+        { id: 2 },
+        { id: 3 },
+        { id: 4 },
+        { id: 5 },
+        { id: 6 },
+        { id: 7 },
+        { id: 8 },
+        { id: 9 },
+        { id: 10 },
+        { id: 11 },
+        { id: 12 },
     ];
 
     /**
@@ -40,7 +53,7 @@ const Main = () => {
      * @param {UserLocationChangeEvent} e 事件數據
      */
     const onUserLocationChange = e => {
-        const {latitude, longitude} = e.nativeEvent.coordinate;
+        const { latitude, longitude } = e.nativeEvent.coordinate;
         userLocal.latitude = latitude;
         userLocal.longitude = longitude;
     };
@@ -48,27 +61,28 @@ const Main = () => {
     /**
      * 定位
      */
-    const onLocal = () => {
+    const onLocal = useCallback(() => {
         ref.current.animateCamera({
-            center: {...userLocal},
+            center: { ...userLocal },
             pitch: 0,
             heading: 0,
             zoom: 15.5,
         });
-    };
+    }, [userLocal]);
 
     /**
      * 搜尋區域
      * @returns {Promise<void>}
      */
     const onSearch = async () => {
+        setLoading(true);
         const bounds = await ref.current.getMapBoundaries();
+        console.log(bounds);
+        
+        
     };
 
-    /**
-     * 檢查定位權限
-     * @type {React.useCallback<(function(any): void) | any>}
-     */
+    /* 檢查定位權限 */
     const checkPermissions = useCallback(result => {
         switch (result) {
             case RESULTS.UNAVAILABLE:
@@ -97,32 +111,53 @@ const Main = () => {
         }
     }, []);
 
-    /* 檢查權限 */
+    /* 開app 檢查權限 */
     useEffect(() => {
         check(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION).then(checkPermissions);
     }, [checkPermissions]);
 
-    // ref
-    const bottomSheetRef = useRef(null);
-    const windowWidth = Dimensions.get('window').width * 0.8;
+    /* 當櫃桶距離更改時自動定位 */
+    useEffect(() => {
+        setTimeout(() => {
+            onLocal();
+        }, 1000);
+    }, [mapPadding, onLocal]);
 
-    // variables
-    const snapPoints = useMemo(() => ['15%', '25%', '50%'], []);
-
-    // callbacks
+    /* 根據櫃桶拉開距離決定地圖Padding */
     const handleSheetChanges = useCallback(index => {
-        console.log('handleSheetChanges', index);
-    }, []);
+        if (index === 0) {
+            setMapPadding({
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: windowHeight * 0.15,
+            });
+        } else if (index === 1) {
+            setMapPadding({
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: windowHeight * 0.25,
+            });
+        } else {
+            setMapPadding({
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: windowHeight * 0.50,
+            });
+        }
+    }, [windowHeight]);
 
     return (
-        <SafeAreaView style={{flex: 1}}>
+        <SafeAreaView style={{ flex: 1 }}>
             <StatusBar
                 animated={true}
                 backgroundColor={Color.transparent}
                 translucent={true}
             />
             <MapView
-                style={{flex: 1}}
+                style={{ flex: 1, elevation: -1 }}
                 initialCamera={{
                     center: {
                         latitude: 22.3659544,
@@ -137,20 +172,16 @@ const Main = () => {
                 followsUserLocation={true}
                 toolbarEnabled={false}
                 showsMyLocationButton={false}
-                mapPadding={{
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 20,
-                }}
+                mapPadding={mapPadding}
                 ref={ref}
             />
             <View style={styles.top}>
                 <Button
                     onPress={onSearch}
                     mode={'contained'}
-                    style={{width: 'auto'}}
-                    textColor={Color.light}>
+                    style={{ width: 'auto', elevation: 5 }}
+                    textColor={Color.light}
+                    loading={loading}>
                     搜尋這個區域
                 </Button>
             </View>
@@ -166,30 +197,29 @@ const Main = () => {
                 ref={bottomSheetRef}
                 index={1}
                 snapPoints={snapPoints}
-                onChange={handleSheetChanges}>
+                onChange={handleSheetChanges}
+                style={{elevation: 5}}>
                 <BottomSheetFlatList
                     data={test}
                     horizontal={true}
                     keyExtractor={i => i.id}
-                    pagingEnabled={true}
-                    snapToInterval={0.8}
+                    snapToInterval={cardWidth + 10}
+                    snapToAlignment={'start'}
+                    decelerationRate={'normal'}
                     showsHorizontalScrollIndicator={false}
-                    ListHeaderComponent={<View style={{width: 20}} />}
-                    renderItem={({item, index}) => (
+                    ListHeaderComponent={<View style={{ width: 20 }} />}
+                    renderItem={({ item, index }) => (
                         <View
                             key={index}
                             style={{
-                                width: windowWidth,
+                                width: cardWidth,
                                 backgroundColor: Color.secondary,
                                 marginRight: 10,
                             }}>
-                            {[0].map((value, index) => (
-                                <Text
-                                    style={{color: Color.darkColor}}
-                                    key={index}>
-                                    {item.id}
-                                </Text>
-                            ))}
+                            <Text
+                                style={{ color: Color.darkColor }}>
+                                {item.id}
+                            </Text>
                         </View>
                     )}
                 />
