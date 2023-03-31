@@ -57,6 +57,15 @@ project.ext.vectoricons = [
 ]
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 
+def localPropertiesFile = new Properties()
+localPropertiesFile.load(project.rootProject.file('local.properties').newDataInputStream())
+task printProps {
+    doFirst {
+        println localPropertiesFile.getProperty("MYAPP_UPLOAD_STORE_FILE")
+        println localPropertiesFile.getProperty("MYAPP_UPLOAD_KEY_ALIAS")
+    }
+}
+
 /**
  * Set this to true to create four separate APKs instead of one,
  * one for each native architecture. This is useful if you don't
@@ -122,6 +131,14 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            if (localPropertiesFile.getProperty("MYAPP_UPLOAD_STORE_FILE")) {
+                storeFile file(localPropertiesFile.getProperty("MYAPP_UPLOAD_STORE_FILE"))
+                storePassword localPropertiesFile.getProperty("MYAPP_UPLOAD_STORE_PASSWORD")
+                keyAlias localPropertiesFile.getProperty("MYAPP_UPLOAD_KEY_ALIAS")
+                keyPassword localPropertiesFile.getProperty("MYAPP_UPLOAD_KEY_PASSWORD")
+            }
+        }
     }
     buildTypes {
         debug {
@@ -130,7 +147,7 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }

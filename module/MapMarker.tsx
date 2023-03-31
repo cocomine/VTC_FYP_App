@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Marker } from 'react-native-maps';
 import { Color } from './Color';
 import { ResultData } from './resultData';
@@ -14,6 +14,7 @@ interface MapMarkerProps {
  */
 const MapMarker: React.FC<MapMarkerProps> = ({ data, onPress, trigger = false }) => {
     const [opacity, setOpacity] = useState(0.6);
+    const markerRef = useRef(null);
 
     /* 處理按下 */
     const handlePress = useCallback(() => {
@@ -28,13 +29,18 @@ const MapMarker: React.FC<MapMarkerProps> = ({ data, onPress, trigger = false })
     useEffect(() => {
         if (trigger) {
             setOpacity(1);
+            // @ts-ignore
+            markerRef.current.showCallout();
         } else {
             setOpacity(0.6);
+            // @ts-ignore
+            markerRef.current.hideCallout();
         }
     }, [trigger, handlePress]);
 
     return (
         <Marker
+            ref={markerRef}
             title={data.name}
             opacity={opacity}
             coordinate={{

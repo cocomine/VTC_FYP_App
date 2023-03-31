@@ -128,7 +128,6 @@ const Main = ({}) => {
     const listScroll = useCallback((e) => {
         const index = Math.round(e.nativeEvent.contentOffset.x / (cardWidth + 10));
         setActivatedMarker(index);
-        console.log(index);
     }, [cardWidth]);
 
     /**
@@ -157,8 +156,9 @@ const Main = ({}) => {
             if (response.ok && json.code === 200) {
                 setData(json.data);
                 setActivatedMarker(0);
+                flatList.current.scrollToIndex({ index: 0, viewOffset: 0 });
             } else {
-
+                Toast.show('發生錯誤, 請稍後嘗試', Toast.SHORT);
             }
         }).finally(() => {
             setLoading(false);
