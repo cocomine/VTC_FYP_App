@@ -6,8 +6,8 @@
  */
 
 import React from 'react';
-import {StyleSheet, useColorScheme} from 'react-native';
-import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import { useColorScheme } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {
     DarkTheme as NavigationDarkTheme,
     DefaultTheme as NavigationDefaultTheme,
@@ -19,11 +19,11 @@ import {
     MD3LightTheme as PaperDefaultTheme,
     Provider as PaperProvider,
 } from 'react-native-paper';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import merge from 'deepmerge';
-import {Color} from './module/Color';
-import Main from "./page/Main";
-import {StartUp} from "./page/StartUp";
+import { Color } from './module/Color';
+import Main from './page/Main';
+import { StartUp } from './page/StartUp';
 
 const Stack = createNativeStackNavigator();
 
@@ -33,6 +33,7 @@ CombinedDarkTheme = {
     ...CombinedDarkTheme,
     colors: {...CombinedDarkTheme.colors, background: Color.darkColor},
 };
+const URL = 'https://fyp.cocomine.cc';
 
 function App() {
     const isDarkMode = useColorScheme() === 'dark';
@@ -85,3 +86,4 @@ function CustomNavigationBar({navigation, back, options}) {
 }
 
 export default App;
+export {URL};
