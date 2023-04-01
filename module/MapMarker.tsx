@@ -7,12 +7,13 @@ interface MapMarkerProps {
     data: ResultData;
     onPress: () => void;
     trigger: boolean;
+    onActive: (isActive: boolean) => void;
 }
 
 /**
  * 地圖標記
  */
-const MapMarker: React.FC<MapMarkerProps> = ({ data, onPress, trigger = false }) => {
+const MapMarker: React.FC<MapMarkerProps> = ({ data, onPress, trigger = false , onActive}) => {
     const [opacity, setOpacity] = useState(0.6);
     const markerRef = useRef(null);
 
@@ -20,11 +21,13 @@ const MapMarker: React.FC<MapMarkerProps> = ({ data, onPress, trigger = false })
     const handlePress = useCallback(() => {
         if (opacity <= 0.6) {
             setOpacity(1);
+            onActive && onActive(true);
         } else {
             setOpacity(0.6);
+            onActive && onActive(false);
         }
         onPress && onPress();
-    }, [onPress, opacity]);
+    }, [onActive, onPress, opacity]);
 
     useEffect(() => {
         if (trigger) {
