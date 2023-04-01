@@ -11,6 +11,14 @@ import Toast from 'react-native-simple-toast';
 import MapMarker from '../module/MapMarker';
 import EventCard from '../module/EventCard';
 import EmptyCard from '../module/EmptyCard';
+import { trigger } from 'react-native-haptic-feedback';
+
+const options = {
+    enableVibrateFallback: true,
+    ignoreAndroidSystemSettings: false,
+};
+/** @type ResultData[] */
+const ResultDataType = [];
 
 /**
  * 主頁
@@ -18,8 +26,6 @@ import EmptyCard from '../module/EmptyCard';
  * @constructor
  */
 const Main = ({}) => {
-    /** @type ResultData[] */
-    const ResultDataType = [];
     const cardWidth = Dimensions.get('window').width * 0.8; //卡片寬度
     const theme = useTheme(); //主題
 
@@ -120,6 +126,10 @@ const Main = ({}) => {
         }
     }, []);
 
+    const handleSheetAnimate = useCallback(() => {
+        trigger('keyboardPress', options);
+    }, []);
+
     /**
      * 點擊標記
      * @type {(function(*): void)|*}
@@ -158,6 +168,7 @@ const Main = ({}) => {
         setActivatedMarker(index);
 
         if (activatedMarker !== index) {
+            trigger('effectTick', options);
             moveMap(index).then(r => {});
         }
     }, [activatedMarker, cardWidth, moveMap]);
@@ -297,6 +308,7 @@ const Main = ({}) => {
                     index={1}
                     snapPoints={snapPoints}
                     onChange={handleSheetChanges}
+                    onAnimate={handleSheetAnimate}
                     style={{ elevation: 5 }}
                     backgroundStyle={{ backgroundColor: theme.colors.background }}
                     handleIndicatorStyle={{ backgroundColor: Color.secondary, width: '40%' }}

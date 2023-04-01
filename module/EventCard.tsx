@@ -74,7 +74,7 @@ const EventCard: React.FC<EventCardProps> = ({ data, cardWidth }) => {
             }
             img {
                 width: 100%;
-                border-radius: 20px;
+                border-radius: 10pt;
             }
         </style>`
         + data.description_html;
@@ -132,7 +132,7 @@ const EventCard: React.FC<EventCardProps> = ({ data, cardWidth }) => {
                         source={{ html: data.description_html, baseUrl: URL }}
                         textZoom={cardWidth * 0.9}
                         originWhitelist={['*']}
-                        style={{ backgroundColor: Color.transparent, height: 1000 }}
+                        style={styles.webview}
                     />
                 </BottomSheetScrollView>
             </View>
@@ -141,6 +141,10 @@ const EventCard: React.FC<EventCardProps> = ({ data, cardWidth }) => {
 };
 
 const styles = StyleSheet.create({
+    webview:{
+        backgroundColor: Color.transparent,
+        height: 1000
+    },
     thumbnail: {
         width: '100%',
         height: 100,
