@@ -10,6 +10,7 @@ import { FlatList } from 'react-native-gesture-handler';
 import Toast from 'react-native-simple-toast';
 import MapMarker from '../module/MapMarker';
 import EventCard from '../module/EventCard';
+import EmptyCard from '../module/EmptyCard';
 
 /**
  * 主頁
@@ -53,18 +54,6 @@ const Main = ({}) => {
     };
 
     /**
-     * 定位
-     */
-    const onLocal = useCallback(() => {
-        ref.current.animateCamera({
-            center: { ...userLocal },
-            pitch: 0,
-            heading: 0,
-            zoom: 15.5,
-        });
-    }, [userLocal]);
-
-    /**
      * 檢查定位權限
      * @type {(function(*): void)|*}
      */
@@ -89,8 +78,8 @@ const Main = ({}) => {
                 console.log('已允許');
                 break;
             case RESULTS.BLOCKED:
-                check(PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION).then((result) => {
-                    if(result === RESULTS.GRANTED) {
+                check(PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION).then((result2) => {
+                    if (result2 === RESULTS.GRANTED) {
                         console.log('需要精準定位權限');
                         Toast.show('需要精準定位權限, 請前往設定開啟', Toast.LONG);
                     } else {
@@ -212,6 +201,26 @@ const Main = ({}) => {
         });
     }, [loading]);
 
+    useEffect(() => {
+        setTimeout(() => {
+            onSearch().then(r => {});
+        }, 1000);
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    /**
+     * 定位
+     */
+    const onLocal = useCallback(() => {
+        ref.current.animateCamera({
+            center: { ...userLocal },
+            pitch: 0,
+            heading: 0,
+            zoom: 15.5,
+        });
+    }, [userLocal]);
+
     /* 開app 檢查權限 */
     useEffect(() => {
         check(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION).then(checkPermissions);
@@ -302,6 +311,7 @@ const Main = ({}) => {
                         decelerationRate={'normal'}
                         showsHorizontalScrollIndicator={false}
                         onScroll={listScroll}
+                        ListEmptyComponent={<EmptyCard />}
                         snapToOffsets={data.map((_, index) => index * (cardWidth + 10))}
                         ListHeaderComponent={<View style={{ width: 20 }} />}
                         getItemLayout={(_, index) => (

@@ -6,8 +6,8 @@ import { ResultData } from './resultData';
 interface MapMarkerProps {
     data: ResultData;
     onPress: () => void;
-    trigger: boolean;
-    onActive: (isActive: boolean) => void;
+    trigger?: boolean;
+    onActive?: (isActive: boolean) => void;
 }
 
 /**
@@ -46,6 +46,7 @@ const MapMarker: React.FC<MapMarkerProps> = ({ data, onPress, trigger = false , 
             ref={markerRef}
             title={data.name}
             opacity={opacity}
+            calloutOffset={{ x: 20, y: 20 }}
             coordinate={{
                 latitude: data.latitude,
                 longitude: data.longitude
