@@ -72,8 +72,8 @@ const EventCard: React.FC<EventCardProps> = ({ data, cardWidth }) => {
             }}>
             <Image style={styles.thumbnail} source={{ uri: URL + '/panel/api/media/' + data.thumbnail }} />
             <View style={styles.text_title}>
-                <Text variant={'titleMedium'}>{data.name}</Text>
-                <Text variant={'labelSmall'} style={{color: theme.colors.secondary}}><Icon name={'star'} color={Color.warning}/>{data.rate}({data.total})</Text>
+                <Text variant={'titleMedium'} style={{overflow: 'hidden', flex:1}} numberOfLines={1}>{data.name}</Text>
+                <Text variant={'labelSmall'} style={{color: theme.colors.secondary, width:'auto'}}><Icon name={'star'} color={Color.warning}/>{data.rate}({data.total})</Text>
             </View>
             <Text style={[styles.text_summary, {color: theme.colors.secondary}]} variant={'bodyMedium'}>{data.summary}</Text>
             <View style={styles.moreBtn_container}>
@@ -94,9 +94,9 @@ const styles = StyleSheet.create({
         paddingTop: 10,
     },
     text_title: {
-        display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
+        width: '100%',
         paddingTop: 10,
     },
     moreBtn_container: {
