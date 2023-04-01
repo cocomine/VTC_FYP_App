@@ -1,12 +1,14 @@
 import { Image, Linking, StyleSheet, View } from 'react-native';
 import { URL } from '../App';
-import { Button, Text, useTheme } from 'react-native-paper';
+import { Button, Divider, Text, useTheme } from 'react-native-paper';
 import { Color } from './Color';
 import { ResultData } from './resultData';
 import React from 'react';
 import { InAppBrowser } from 'react-native-inappbrowser-reborn';
 // @ts-ignore
 import Icon from 'react-native-vector-icons/AntDesign';
+import WebView from 'react-native-webview';
+import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 
 interface EventCardProps {
     data: ResultData;
@@ -19,7 +21,6 @@ interface EventCardProps {
 const EventCard: React.FC<EventCardProps> = ({ data, cardWidth }) => {
     const theme = useTheme();
 
-    /*  */
     const handlePress = async () => {
         try {
             const url = URL + '/details/' + data.ID;
@@ -64,21 +65,76 @@ const EventCard: React.FC<EventCardProps> = ({ data, cardWidth }) => {
         }
     };
 
+    //add style
+    data.description_html =
+        `<style>
+            * {
+                color: ${theme.colors.secondary};
+                user-select: none;
+            }
+            img {
+                width: 100%;
+                border-radius: 20px;
+            }
+        </style>`
+        + data.description_html;
+
     return (
         <View
             style={{
                 width: cardWidth,
                 marginRight: 10,
             }}>
-            <Image style={styles.thumbnail} source={{ uri: URL + '/panel/api/media/' + data.thumbnail }} />
+            <Image
+                style={styles.thumbnail}
+                source={{ uri: URL + '/panel/api/media/' + data.thumbnail }}
+            />
             <View style={styles.text_title}>
-                <Text variant={'titleMedium'} style={{overflow: 'hidden', flex:1}} numberOfLines={1}>{data.name}</Text>
-                <Text variant={'labelSmall'} style={{color: theme.colors.secondary, width:'auto'}}><Icon name={'star'} color={Color.warning}/>{data.rate}({data.total})</Text>
+                <Text
+                    variant={'titleMedium'}
+                    style={{ overflow: 'hidden', flex: 1 }}
+                    numberOfLines={1}
+                >
+                    {data.name}
+                </Text>
+                <Text
+                    variant={'labelSmall'}
+                    style={{ color: theme.colors.secondary, width: 'auto' }}
+                >
+                    <Icon
+                        name={'star'}
+                        color={Color.warning}
+                    />
+                    {data.rate}({data.total})
+                </Text>
             </View>
-            <Text style={[styles.text_summary, {color: theme.colors.secondary}]} variant={'bodyMedium'}>{data.summary}</Text>
+            <Text
+                style={[styles.text_summary, { color: theme.colors.secondary }]}
+                variant={'bodyMedium'}
+            >
+                {data.summary}
+            </Text>
             <View style={styles.moreBtn_container}>
-                <Button mode={'contained'} textColor={Color.light} style={{ width: 'auto' }}
-                        onPress={handlePress}>立即預約</Button>
+                <Button
+                    mode={'contained'}
+                    textColor={Color.light}
+                    style={{ width: 'auto' }}
+                    onPress={handlePress}
+                >
+                    立即預約
+                </Button>
+            </View>
+            <Divider style={{ marginTop: 10 }} />
+            <View style={{ flex: 1, marginTop: 5 }}>
+                <Text variant={'titleMedium'}>活動詳情</Text>
+                <BottomSheetScrollView style={{ marginTop: 10 }}>
+                    <WebView
+                        source={{ html: data.description_html, baseUrl: URL }}
+                        textZoom={cardWidth * 0.9}
+                        originWhitelist={['*']}
+                        style={{ backgroundColor: Color.transparent, height: 1000 }}
+                    />
+                </BottomSheetScrollView>
             </View>
         </View>
     );

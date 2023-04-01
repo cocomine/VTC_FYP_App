@@ -41,7 +41,7 @@ const Main = ({}) => {
     const [data, setData] = useState(ResultDataType); // 搜尋結果
     const [activatedMarker, setActivatedMarker] = useState(0); // 激活的標記
 
-    const snapPoints = useMemo(() => [80, PixelRatio.getFontScale() + 160, 400], []); // bottomSheet 停止位置
+    const snapPoints = useMemo(() => [80, PixelRatio.getFontScale() + 160, 400, '90%'], []); // bottomSheet 停止位置
 
     /**
      * gps更新

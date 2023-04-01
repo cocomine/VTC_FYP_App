@@ -34,6 +34,10 @@ type ResultData = {
    * @description total is the total review of the event
    */
   total:number;
+  /**
+   * @description description is the description html code of the event
+   */
+  description_html: string;
 }
 
 /**
