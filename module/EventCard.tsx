@@ -3,7 +3,7 @@ import { URL } from '../App';
 import { Button, Divider, Text, useTheme } from 'react-native-paper';
 import { Color } from './Color';
 import { ResultData } from './resultData';
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 import { InAppBrowser } from 'react-native-inappbrowser-reborn';
 // @ts-ignore
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -14,12 +14,51 @@ interface EventCardProps {
     data: ResultData;
     cardWidth: number;
 }
+type newNavState = {
+    url?: string;
+}
+
+// 瀏覽器參數
+const inAppBrowser_Opt = {
+    // iOS Properties
+    dismissButtonStyle: 'cancel',
+    preferredBarTintColor: Color.primaryColor,
+    preferredControlTintColor: 'white',
+    readerMode: false,
+    animated: true,
+    modalPresentationStyle: 'fullScreen',
+    modalTransitionStyle: 'coverVertical',
+    modalEnabled: true,
+    enableBarCollapsing: false,
+    // Android Properties
+    showTitle: true,
+    hasBackButton: true,
+    showInRecents: true,
+    toolbarColor: Color.primaryColor,
+    secondaryToolbarColor: 'white',
+    navigationBarColor: 'white',
+    navigationBarDividerColor: 'white',
+    enableUrlBarHiding: true,
+    enableDefaultShare: true,
+    forceCloseOnRedirection: false,
+    browserPackage: 'com.android.chrome',
+    // Specify full animation resource identifier(package:anim/name)
+    // or only resource name(in case of animation bundled with app).
+    animations: {
+        startEnter: 'slide_in_right',
+        startExit: 'slide_out_left',
+        endEnter: 'slide_in_left',
+        endExit: 'slide_out_right',
+    },
+}
 
 /**
  * Event卡片
  */
 const EventCard: React.FC<EventCardProps> = ({ data, cardWidth }) => {
     const theme = useTheme();
+
+    const webview = useRef<WebView | null>(null);
 
     /**
      * 點擊立即預約
@@ -28,38 +67,7 @@ const EventCard: React.FC<EventCardProps> = ({ data, cardWidth }) => {
         try {
             const url = URL + '/details/' + data.ID;
             if (await InAppBrowser.isAvailable()) {
-                await InAppBrowser.open(url, {
-                    // iOS Properties
-                    dismissButtonStyle: 'cancel',
-                    preferredBarTintColor: Color.primaryColor,
-                    preferredControlTintColor: 'white',
-                    readerMode: false,
-                    animated: true,
-                    modalPresentationStyle: 'fullScreen',
-                    modalTransitionStyle: 'coverVertical',
-                    modalEnabled: true,
-                    enableBarCollapsing: false,
-                    // Android Properties
-                    showTitle: true,
-                    hasBackButton: true,
-                    showInRecents: true,
-                    toolbarColor: Color.primaryColor,
-                    secondaryToolbarColor: 'white',
-                    navigationBarColor: 'white',
-                    navigationBarDividerColor: 'white',
-                    enableUrlBarHiding: true,
-                    enableDefaultShare: true,
-                    forceCloseOnRedirection: false,
-                    browserPackage: 'com.android.chrome',
-                    // Specify full animation resource identifier(package:anim/name)
-                    // or only resource name(in case of animation bundled with app).
-                    animations: {
-                        startEnter: 'slide_in_right',
-                        startExit: 'slide_out_left',
-                        endEnter: 'slide_in_left',
-                        endExit: 'slide_out_right',
-                    },
-                });
+                await InAppBrowser.open(url, inAppBrowser_Opt);
             } else {
                 await Linking.openURL(url);
             }
@@ -73,9 +81,12 @@ const EventCard: React.FC<EventCardProps> = ({ data, cardWidth }) => {
      */
     const description = useMemo(() => {
         return `<style>
-            * {
+            body {
                 color: ${theme.colors.secondary};
                 user-select: none;
+            }
+            a {
+                color: ${Color.primaryColor};
             }
             img {
                 width: 100%;
@@ -85,6 +96,23 @@ const EventCard: React.FC<EventCardProps> = ({ data, cardWidth }) => {
             + data.description_html;
     }, [data.description_html, theme.colors.secondary]);
 
+    /**
+     * 瀏覽器狀態改變
+     */
+    const onNavigationStateChange = useCallback(async ({url}: newNavState) => {
+        if (!url) return;
+
+        console.log(url);
+        // 攔截連結
+        if (!url.includes(URL)) {
+            webview.current?.stopLoading();
+            if (await InAppBrowser.isAvailable()) {
+                await InAppBrowser.open(url, inAppBrowser_Opt);
+            } else {
+                await Linking.openURL(url);
+            }
+        }
+    }, []);
 
     return (
         <View
@@ -136,10 +164,12 @@ const EventCard: React.FC<EventCardProps> = ({ data, cardWidth }) => {
                 <Text variant={'titleMedium'}>活動詳情</Text>
                 <BottomSheetScrollView style={{ marginTop: 10 }}>
                     <WebView
+                        ref={webview}
                         source={{ html: description, baseUrl: URL }}
                         textZoom={cardWidth * 0.9}
                         originWhitelist={['*']}
                         style={styles.webview}
+                        onNavigationStateChange={onNavigationStateChange}
                     />
                 </BottomSheetScrollView>
             </View>
