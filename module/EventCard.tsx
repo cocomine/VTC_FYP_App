@@ -3,7 +3,7 @@ import { URL } from '../App';
 import { Button, Divider, Text, useTheme } from 'react-native-paper';
 import { Color } from './Color';
 import { ResultData } from './resultData';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { InAppBrowser } from 'react-native-inappbrowser-reborn';
 // @ts-ignore
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -21,6 +21,9 @@ interface EventCardProps {
 const EventCard: React.FC<EventCardProps> = ({ data, cardWidth }) => {
     const theme = useTheme();
 
+    /**
+     * 點擊立即預約
+     */
     const handlePress = async () => {
         try {
             const url = URL + '/details/' + data.ID;
@@ -65,19 +68,23 @@ const EventCard: React.FC<EventCardProps> = ({ data, cardWidth }) => {
         }
     };
 
-    //add style
-    data.description_html =
-        `<style>
+    /**
+     * 說明文字 -> HTML -> WebView -> 加上style
+     */
+    const description = useMemo(() => {
+        return `<style>
             * {
                 color: ${theme.colors.secondary};
                 user-select: none;
             }
             img {
                 width: 100%;
-                border-radius: 10pt;
+                border-radius: 20pt;
             }
         </style>`
-        + data.description_html;
+            + data.description_html;
+    }, [data.description_html, theme.colors.secondary]);
+
 
     return (
         <View
@@ -129,7 +136,7 @@ const EventCard: React.FC<EventCardProps> = ({ data, cardWidth }) => {
                 <Text variant={'titleMedium'}>活動詳情</Text>
                 <BottomSheetScrollView style={{ marginTop: 10 }}>
                     <WebView
-                        source={{ html: data.description_html, baseUrl: URL }}
+                        source={{ html: description, baseUrl: URL }}
                         textZoom={cardWidth * 0.9}
                         originWhitelist={['*']}
                         style={styles.webview}
