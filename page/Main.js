@@ -19,6 +19,7 @@ const options = {
 };
 /** @type ResultData[] */
 const ResultDataType = [];
+let first_time = true;
 
 /**
  * 主頁
@@ -212,13 +213,16 @@ const Main = ({}) => {
         });
     }, [loading]);
 
-    useEffect(() => {
-        setTimeout(() => {
+    /**
+     * 初始開app -> 地圖移動完成 -> 搜尋
+     * @type {(function(*, {isGesture: *}): void)|*}
+     */
+    const onRegionChangeComplete = useCallback((_, {isGesture}) => {
+        if (isGesture === false && first_time === true){
             onSearch().then(r => {});
-        }, 1000);
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+            first_time = false;
+        }
+    }, [onSearch]);
 
     /**
      * 定位
@@ -258,14 +262,11 @@ const Main = ({}) => {
                 />
                 <MapView
                     style={{ flex: 1, elevation: -1 }}
-                    initialCamera={{
-                        center: {
-                            latitude: 22.3659544,
-                            longitude: 114.1213403,
-                        },
-                        pitch: 0,
-                        heading: 0,
-                        zoom: 9.8,
+                    initialRegion={{
+                        latitude: 22.3659544,
+                        longitude: 114.1213403,
+                        latitudeDelta: 0.0922,
+                        longitudeDelta: 0.0421,
                     }}
                     onUserLocationChange={onUserLocationChange}
                     showsUserLocation={gps}
@@ -273,6 +274,7 @@ const Main = ({}) => {
                     toolbarEnabled={false}
                     showsMyLocationButton={false}
                     mapPadding={mapPadding}
+                    onRegionChangeComplete={onRegionChangeComplete}
                     ref={ref}
                 >
                     {
