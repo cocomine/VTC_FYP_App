@@ -33,7 +33,7 @@ CombinedDarkTheme = {
     ...CombinedDarkTheme,
     colors: {...CombinedDarkTheme.colors, background: Color.darkColor},
 };
-const URL = 'https://fyp.cocomine.cc';
+const URL = 'https://xsport.cocomine.cc/';
 
 function App() {
     const isDarkMode = useColorScheme() === 'dark';
