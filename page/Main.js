@@ -196,7 +196,6 @@ const Main = ({}) => {
             },
             body: JSON.stringify(bounds),
         }).then(async (response) => {
-            console.log(await response.text());
             /** @type {respondData} */
             const json = await response.json();
             if (response.ok && json.code === 200) {
