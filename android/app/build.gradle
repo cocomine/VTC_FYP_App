@@ -59,12 +59,6 @@ apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 
 def localPropertiesFile = new Properties()
 localPropertiesFile.load(project.rootProject.file('local.properties').newDataInputStream())
-task printProps {
-    doFirst {
-        println localPropertiesFile.getProperty("MYAPP_UPLOAD_STORE_FILE")
-        println localPropertiesFile.getProperty("MYAPP_UPLOAD_KEY_ALIAS")
-    }
-}
 
 /**
  * Set this to true to create four separate APKs instead of one,
@@ -112,8 +106,8 @@ android {
         applicationId "cc.cocomine.xtravel"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 4
-        versionName "1.6.1"
+        versionCode 5
+        versionName "1.6.2"
     }
 
     splits {
