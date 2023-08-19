@@ -283,6 +283,7 @@ const Main = ({}) => {
                 toolbarEnabled={false}
                 showsMyLocationButton={false}
                 mapPadding={mapPadding}
+                provider={'google'}
                 onRegionChangeComplete={onRegionChangeComplete}
                 ref={ref}
             >

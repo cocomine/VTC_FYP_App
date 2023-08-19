@@ -255,6 +255,7 @@ const Main = ({}) => {
             <StatusBar
                 animated={true}
                 backgroundColor={Color.transparent}
+                barStyle={'dark-content'}
                 translucent={true}
             />
             <MapView
@@ -271,6 +272,7 @@ const Main = ({}) => {
                 toolbarEnabled={false}
                 showsMyLocationButton={false}
                 mapPadding={mapPadding}
+                provider={'google'}
                 onRegionChangeComplete={onRegionChangeComplete}
                 ref={ref}
             >
