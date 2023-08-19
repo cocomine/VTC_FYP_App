@@ -1,4 +1,4 @@
-import { Image, Linking, StyleSheet, View } from 'react-native';
+import {Dimensions, Image, Linking, PixelRatio, StyleSheet, View} from 'react-native';
 import { URL } from '../App';
 import { Button, Divider, Text, useTheme } from 'react-native-paper';
 import { Color } from './Color';
@@ -50,7 +50,7 @@ const inAppBrowser_Opt = {
         endEnter: 'slide_in_left',
         endExit: 'slide_out_right',
     },
-}
+};
 
 /**
  * Event卡片
@@ -84,6 +84,7 @@ const EventCard: React.FC<EventCardProps> = ({ data, cardWidth }) => {
             body {
                 color: ${theme.colors.secondary};
                 user-select: none;
+                font-size: ${45 * PixelRatio.getFontScale()}px;
             }
             a {
                 color: ${Color.primaryColor};

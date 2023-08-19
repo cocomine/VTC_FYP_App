@@ -1,17 +1,17 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Dimensions, PixelRatio, SafeAreaView, StatusBar, StyleSheet, View } from 'react-native';
-import MapView, { UserLocationChangeEvent } from 'react-native-maps';
-import { Button, IconButton, useTheme } from 'react-native-paper';
-import { check, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
-import { Color } from '../module/Color';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {Dimensions, PixelRatio, StatusBar, StyleSheet, View} from 'react-native';
+import MapView, {UserLocationChangeEvent} from 'react-native-maps';
+import {Button, IconButton, useTheme} from 'react-native-paper';
+import {check, PERMISSIONS, request, RESULTS} from 'react-native-permissions';
+import {Color} from '../module/Color';
 import BottomSheet from '@gorhom/bottom-sheet';
-import { URL } from '../App';
-import { FlatList } from 'react-native-gesture-handler';
+import {URL} from '../App';
+import {FlatList} from 'react-native-gesture-handler';
 import Toast from 'react-native-simple-toast';
 import MapMarker from '../module/MapMarker';
 import EventCard from '../module/EventCard';
 import EmptyCard from '../module/EmptyCard';
-import { trigger } from 'react-native-haptic-feedback';
+import {trigger} from 'react-native-haptic-feedback';
 
 const options = {
     enableVibrateFallback: true,
@@ -55,7 +55,7 @@ const Main = ({}) => {
      * @param {UserLocationChangeEvent} e 事件數據
      */
     const onUserLocationChange = e => {
-        const { latitude, longitude } = e.nativeEvent.coordinate;
+        const {latitude, longitude} = e.nativeEvent.coordinate;
         userLocal.latitude = latitude;
         userLocal.longitude = longitude;
     };
@@ -71,7 +71,7 @@ const Main = ({}) => {
                 Toast.show('你的裝置無法使用定位功能', Toast.LONG);
                 break;
             case RESULTS.DENIED:
-                request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION).then(
+                request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE).then(
                     checkPermissions,
                 );
                 console.log('要求權限');
@@ -85,15 +85,8 @@ const Main = ({}) => {
                 console.log('已允許');
                 break;
             case RESULTS.BLOCKED:
-                check(PERMISSIONS.ANDROID.ACCESS_COARSE_LOCATION).then((result2) => {
-                    if (result2 === RESULTS.GRANTED) {
-                        console.log('需要精準定位權限');
-                        Toast.show('需要精準定位權限, 請前往設定開啟', Toast.LONG);
-                    } else {
-                        console.log('你拒絕了位置權限');
-                        Toast.show('你拒絕了位置權限, 請前往設定開啟', Toast.LONG);
-                    }
-                });
+                console.log('你拒絕了位置權限');
+                Toast.show('你拒絕了位置權限, 請前往設定開啟', Toast.LONG);
                 break;
         }
     }, []);
@@ -136,7 +129,7 @@ const Main = ({}) => {
      * @type {(function(*): void)|*}
      */
     const markerPass = useCallback((index) => {
-        flatList.current.scrollToIndex({ index: index, viewOffset: 0 });
+        flatList.current.scrollToIndex({index: index, viewOffset: 0});
         setActivatedMarker(index);
     }, [flatList]);
 
@@ -170,7 +163,8 @@ const Main = ({}) => {
 
         if (activatedMarker !== index) {
             trigger('effectTick', options);
-            moveMap(index).then(r => {});
+            moveMap(index).then(r => {
+            });
         }
     }, [activatedMarker, cardWidth, moveMap]);
 
@@ -187,7 +181,7 @@ const Main = ({}) => {
         const bounds = await ref.current.getMapBoundaries();
 
         /* send */
-        console.log(URL+"/api/app/xmap/");
+        console.log(URL + '/api/app/xmap/');
         fetch(URL + '/api/app/xmap/', {
             method: 'POST',
             redirect: 'error',
@@ -202,7 +196,7 @@ const Main = ({}) => {
                 setData(json.data);
                 setActivatedMarker(0);
                 if (json.data.length > 0) {
-                    flatList.current.scrollToIndex({ index: 0, viewOffset: 0 });
+                    flatList.current.scrollToIndex({index: 0, viewOffset: 0});
                 }
             } else {
                 Toast.show('發生錯誤, 請稍後嘗試', Toast.SHORT);
@@ -219,8 +213,9 @@ const Main = ({}) => {
      * @type {(function(*, {isGesture: *}): void)|*}
      */
     const onRegionChangeComplete = useCallback((_, {isGesture}) => {
-        if (isGesture === false && first_time === true){
-            onSearch().then(r => {});
+        if (isGesture === false && first_time === true) {
+            onSearch().then(r => {
+            });
             first_time = false;
         }
     }, [onSearch]);
@@ -230,7 +225,7 @@ const Main = ({}) => {
      */
     const onLocal = useCallback(() => {
         ref.current.animateCamera({
-            center: { ...userLocal },
+            center: {...userLocal},
             pitch: 0,
             heading: 0,
             zoom: 15.5,
@@ -239,14 +234,15 @@ const Main = ({}) => {
 
     /* 開app 檢查權限 */
     useEffect(() => {
-        check(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION).then(checkPermissions);
+        check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE).then(checkPermissions);
     }, [checkPermissions]);
 
     /* 當櫃桶距離更改時自動定位 */
     useEffect(() => {
         setTimeout(() => {
-            if (data.length > 0){
-                moveMap(activatedMarker).then(r => {});
+            if (data.length > 0) {
+                moveMap(activatedMarker).then(r => {
+                });
             } else {
                 onLocal();
             }
@@ -254,91 +250,91 @@ const Main = ({}) => {
     }, [activatedMarker, data, mapPadding, moveMap, onLocal]);
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
+        <View style={{flex: 1}}>
             {/*<React.StrictMode>*/}
-                <StatusBar
-                    animated={true}
-                    backgroundColor={Color.transparent}
-                    translucent={true}
-                />
-                <MapView
-                    style={{ flex: 1, elevation: -1 }}
-                    initialRegion={{
-                        latitude: 22.3659544,
-                        longitude: 114.1213403,
-                        latitudeDelta: 0.0922,
-                        longitudeDelta: 0.0421,
-                    }}
-                    onUserLocationChange={onUserLocationChange}
-                    showsUserLocation={gps}
-                    followsUserLocation={true}
-                    toolbarEnabled={false}
-                    showsMyLocationButton={false}
-                    mapPadding={mapPadding}
-                    onRegionChangeComplete={onRegionChangeComplete}
-                    ref={ref}
-                >
-                    {
-                        /** @type {React.ReactElement[]} */
-                        data.map((item, index) => {
-                            return (
-                                <MapMarker data={item} onPress={() => markerPass(index)} key={item.ID}
-                                           trigger={activatedMarker === index}/>
-                            );
-                        })
-                    }
-                </MapView>
-                <View style={styles.top}>
-                    <Button
-                        onPress={onSearch}
-                        mode={'contained'}
-                        style={{ width: 'auto', elevation: 5 }}
-                        textColor={Color.light}
-                        loading={loading}
-                    >
-                        搜尋這個區域
-                    </Button>
-                </View>
-                <IconButton
-                    onPress={onLocal}
+            <StatusBar
+                animated={true}
+                backgroundColor={Color.transparent}
+                translucent={true}
+            />
+            <MapView
+                style={{flex: 1, elevation: -1}}
+                initialRegion={{
+                    latitude: 22.3659544,
+                    longitude: 114.1213403,
+                    latitudeDelta: 0.0922,
+                    longitudeDelta: 0.0421,
+                }}
+                onUserLocationChange={onUserLocationChange}
+                showsUserLocation={gps}
+                followsUserLocation={true}
+                toolbarEnabled={false}
+                showsMyLocationButton={false}
+                mapPadding={mapPadding}
+                onRegionChangeComplete={onRegionChangeComplete}
+                ref={ref}
+            >
+                {
+                    /** @type {React.ReactElement[]} */
+                    data.map((item, index) => {
+                        return (
+                            <MapMarker data={item} onPress={() => markerPass(index)} key={item.ID}
+                                       trigger={activatedMarker === index}/>
+                        );
+                    })
+                }
+            </MapView>
+            <View style={styles.top}>
+                <Button
+                    onPress={onSearch}
                     mode={'contained'}
-                    icon={'crosshairs-gps'}
-                    iconColor={Color.primaryColor}
-                    style={styles.localBtn}
-                    accessibilityLabel={'定位目前位置'}
-                />
-                <BottomSheet
-                    index={1}
-                    snapPoints={snapPoints}
-                    onChange={handleSheetChanges}
-                    onAnimate={handleSheetAnimate}
-                    style={{ elevation: 5 }}
-                    backgroundStyle={{ backgroundColor: theme.colors.background }}
-                    handleIndicatorStyle={{ backgroundColor: Color.secondary, width: '40%' }}
+                    style={{width: 'auto', elevation: 5}}
+                    textColor={Color.light}
+                    loading={loading}
                 >
-                    <FlatList
-                        ref={flatList}
-                        data={data}
-                        horizontal={true}
-                        keyExtractor={i => i.ID.toString()}
-                        snapToInterval={cardWidth + 10}
-                        snapToAlignment={'start'}
-                        decelerationRate={'normal'}
-                        showsHorizontalScrollIndicator={false}
-                        onScroll={listScroll}
-                        ListEmptyComponent={<EmptyCard />}
-                        snapToOffsets={data.map((_, index) => index * (cardWidth + 10))}
-                        ListHeaderComponent={<View style={{ width: 20 }} />}
-                        getItemLayout={(_, index) => (
-                            { length: cardWidth, offset: (cardWidth + 10) * index, index }
-                        )}
-                        renderItem={({ item, index }) => (
-                            <EventCard data={item} cardWidth={cardWidth} />
-                        )}
-                    />
-                </BottomSheet>
+                    搜尋這個區域
+                </Button>
+            </View>
+            <IconButton
+                onPress={onLocal}
+                mode={'contained'}
+                icon={'crosshairs-gps'}
+                iconColor={Color.primaryColor}
+                style={styles.localBtn}
+                accessibilityLabel={'定位目前位置'}
+            />
+            <BottomSheet
+                index={1}
+                snapPoints={snapPoints}
+                onChange={handleSheetChanges}
+                onAnimate={handleSheetAnimate}
+                style={{elevation: 5}}
+                backgroundStyle={{backgroundColor: theme.colors.background}}
+                handleIndicatorStyle={{backgroundColor: Color.secondary, width: '40%'}}
+            >
+                <FlatList
+                    ref={flatList}
+                    data={data}
+                    horizontal={true}
+                    keyExtractor={i => i.ID.toString()}
+                    snapToInterval={cardWidth + 10}
+                    snapToAlignment={'start'}
+                    decelerationRate={'normal'}
+                    showsHorizontalScrollIndicator={false}
+                    onScroll={listScroll}
+                    ListEmptyComponent={<EmptyCard/>}
+                    snapToOffsets={data.map((_, index) => index * (cardWidth + 10))}
+                    ListHeaderComponent={<View style={{width: 20}}/>}
+                    getItemLayout={(_, index) => (
+                        {length: cardWidth, offset: (cardWidth + 10) * index, index}
+                    )}
+                    renderItem={({item, index}) => (
+                        <EventCard data={item} cardWidth={cardWidth}/>
+                    )}
+                />
+            </BottomSheet>
             {/*</React.StrictMode>*/}
-        </SafeAreaView>
+        </View>
     );
 };
 
