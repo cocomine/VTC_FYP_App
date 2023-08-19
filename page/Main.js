@@ -255,7 +255,7 @@ const Main = ({}) => {
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            <React.StrictMode>
+            {/*<React.StrictMode>*/}
                 <StatusBar
                     animated={true}
                     backgroundColor={Color.transparent}
@@ -337,7 +337,7 @@ const Main = ({}) => {
                         )}
                     />
                 </BottomSheet>
-            </React.StrictMode>
+            {/*</React.StrictMode>*/}
         </SafeAreaView>
     );
 };
