@@ -106,8 +106,8 @@ android {
         applicationId "cc.cocomine.xtravel"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 7
-        versionName "1.6.4"
+        versionCode 8
+        versionName "1.6.5"
     }
 
     splits {
