@@ -1,4 +1,4 @@
-import {Dimensions, Image, Linking, PixelRatio, StyleSheet, View} from 'react-native';
+import { Dimensions, Image, Linking, PixelRatio, StyleSheet, View } from 'react-native';
 import { URL } from '../App';
 import { Button, Divider, Text, useTheme } from 'react-native-paper';
 import { Color } from './Color';
@@ -167,7 +167,7 @@ const EventCard: React.FC<EventCardProps> = ({ data, cardWidth }) => {
                     <WebView
                         ref={webview}
                         source={{ html: description, baseUrl: URL }}
-                        textZoom={cardWidth * 0.9}
+                        textZoom={(cardWidth / Dimensions.get('window').width * 100)+15}
                         originWhitelist={['*']}
                         style={styles.webview}
                         onNavigationStateChange={onNavigationStateChange}
